@@ -6,9 +6,57 @@ package chat4me.util;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+
+class CompletionHandlerTester implements CompletionMessageHandler {
+    String resulString;
+    int resultStatus;
+    public int getResultStatusCode() {
+        return resultStatus;
+    }
+    public String getResulString() {
+        return resulString;
+    }
+    @Override
+    public void onReceiveCompletion(int status, String msg) {
+        System.out.println(msg);
+        resultStatus = status;
+        resulString = msg;
+    }
+}
+
 public class LibraryTest {
-    @Test public void someLibraryMethodReturnsTrue() {
-        CompletionClient classUnderTest = new CompletionClient();
-        assertNotNull(classUnderTest.sendCompletionRequest());
+    @Test public void basicCompletionTest() throws IOException, InterruptedException {
+        CompletionClient client = new CompletionClient("http://192.168.56.4/c4m/completion");
+        CompletionHandlerTester handler = new CompletionHandlerTester();
+        String messages = """
+You:right
+You:As long as we have a little, that's fine. We can refine it later
+You:Sure
+You:Alright
+You:Are you guys in the lab room?
+You:the chat4me-util library
+You:She's not in today so you don't have to come. I forgot until I already got to class so I'm just working on the util functions
+You:Do you still have the original document file that you used to create the pdf?
+You:I added the state diagram to the document
+You:Did we need to have the updated class diagram part of the submission or is that just for resubmission of the structural model assignment?
+You:I don't know how but ArgoUML took a dump when it saved the latest UseCaseUML1.zargo so now it's unopenable :/
+You:☝️
+You:206
+You:Since chat4me.org is the cheapest option for the domain, I'm going with that
+You:It generates a jar file that you'll be able to import into the main app via Android Studio
+You:I've started work on the app utility stuff that I mentioned, though it doesn't do anything particularly interesting yet
+https://github.com/The-Chatastic-4-CSCD-350/chat4me-util
+You:I submitted the structural model assignment
+You:Updated the use case diagram and added another for the auto reply if driving use case
+You:nvm, disregard that, I think it might be easier to just share changes by uploading it directly to Discord, the file size is pretty small
+You:I shared the Argo UML file with you guys on Google Drive, here's a link
+You:Continuing the conversation, to help with the coding stuff, I would look into how to encode and decode JSON, and how to send HTTPS POST requests with form data and custom HTTP headers in Java
+""";
+        client.sendCompletionRequest(messages, handler);
+        assertNotNull(handler.getResulString());
+        assertNotEquals("server returned an empty string",
+            "", handler.getResulString());
+        assertEquals("HTTP status code", 200, handler.getResultStatusCode());
     }
 }

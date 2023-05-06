@@ -33,3 +33,10 @@ java {
         languageVersion = JavaLanguageVersion.of(17)
     }
 }
+
+test {
+    testLogging {
+        outputs.upToDateWhen {false}
+        showStandardStreams = true
+    }
+}
