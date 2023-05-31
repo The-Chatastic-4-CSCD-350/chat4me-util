@@ -27,7 +27,7 @@ class CompletionHandlerTester implements CompletionMessageHandler {
 
 public class LibraryTest {
     @Test public void basicCompletionTest() throws IOException, InterruptedException {
-        CompletionClient client = new CompletionClient("http://192.168.56.4/c4m/completion");
+        CompletionClient client = new CompletionClient("https://chat4me.org/c4m/completion");
         CompletionHandlerTester handler = new CompletionHandlerTester();
         String messages = """
 You:right
